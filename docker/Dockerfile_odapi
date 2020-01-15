@@ -49,9 +49,19 @@ RUN echo 'testing installation of Object Detection API' && \
 python $HOME/models/research/object_detection/builders/model_builder_test.py
 
 # install tensorflowjs
-RUN pip install tensorflowjs
-#RUN pip install 'prompt-toolkit==1.0.14'
+# at the time of writing this Dockerfile
+# pip index is not updated with tensorflowjs 1.5.1
+# RUN pip install tensorflowjs
+# so I am building it manually
+WORKDIR $HOME
+RUN git clone --depth 1 https://github.com/tensorflow/tfjs.git
+WORKDIR $HOME/tfjs/tfjs-converter/python/
+# who still uses python 2 in this day and age omg
+RUN sed s/"python2 "/""/ build-pip-package.sh > build-pip-package-3.sh
+RUN chmod +x build-pip-package-3.sh
+RUN ./build-pip-package-3.sh ./wheels
+
 
 # return home
-USER 1000:1000
-WORKDIR $HOME
+# USER 1000:1000
+# WORKDIR $HOME
