@@ -2,9 +2,22 @@ version: '3'
 
 services:
 
-  # TODO
+  tty:
+    build:
+      context: ./dockerfiles
+      dockerfile: odapi
+      image: odapi
+    volumes:
+    - .:/home/oceanus
+    stdin_open: true
+    tty: true
+
+
   jupyter-lab:
-    image: odapi
+    build:
+      context: ./dockerfiles
+      dockerfile: odapi
+      image: odapi
     volumes:
     - .:/home/oceanus
     ports:
@@ -12,15 +25,12 @@ services:
     command:
     - "jupyter-lab --no-browser --ip=* --port=9000 --allow-root"
 
-  tty:
-    image: odapi
-    volumes:
-    - .:/home/oceanus
-    stdin_open: true
-    tty: true
 
-  tensorflowjs-converter:
-    image: odapi
+  tensorflowjs-wizard:
+    build:
+      context: ./dockerfiles
+      dockerfile: tfjs
+      image: tfjs
     volumes:
     - .:/home/oceanus
     command:

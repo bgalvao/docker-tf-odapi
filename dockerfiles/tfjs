@@ -1,5 +1,4 @@
-# could edit this to not use gpu version via ARG
-FROM tensorflow/tensorflow:1.15.0-gpu-py3
+FROM tensorflow/tensorflow:2.1.0-py3
 
 # make a "user" directory, later stored to HOME
 RUN mkdir -p /home/oceanus

@@ -1,3 +1,6 @@
 object_detection_demo/
 .bash_history
 .keras/
+.vscode
+input/*/*
+!input/*/.gitkeep
