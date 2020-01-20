@@ -9,3 +9,5 @@ input/*/*
 
 output/*
 !output/.gitkeep
+
+.cache/

@@ -188,7 +188,9 @@ os.makedirs(model_dir, exist_ok=True)
 
 
 """## Exporting a Trained Inference Graph
-Once your training job is complete, you need to extract the newly trained inference graph, which will be later used to perform the object detection. This can be done as follows:
+Once your training job is complete, you need to extract the newly trained 
+inference graph, which will be later used to perform the object detection.
+This can be done as follows:
 
 ### export to frozen inference graph
 """

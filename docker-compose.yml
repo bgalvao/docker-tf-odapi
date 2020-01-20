@@ -16,7 +16,7 @@ services:
   jupyter-lab:
     build:
       context: ./dockerfiles
-      dockerfile: odapi
+      dockerfile: odapi.dockerfile
       image: odapi
     volumes:
     - .:/home/oceanus
@@ -29,7 +29,7 @@ services:
   tensorflowjs-wizard:
     build:
       context: ./dockerfiles
-      dockerfile: tfjs
+      dockerfile: tfjs.dockerfile
       image: tfjs
     volumes:
     - .:/home/oceanus

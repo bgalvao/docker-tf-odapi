@@ -1,6 +1,6 @@
-# Dockerized TensorFlow Object Detection API
+# Dockerized [TensorFlow Object Detection API](https://github.com/tensorflow/models/tree/master/research/object_detection)
 
-Drivers and Cuda versions are a pain to deal with.
+Drivers and Cuda versions are a pain to deal with. Praise our lord and savior Docker.
 
 - [Dockerized TensorFlow Object Detection API](#dockerized-tensorflow-object-detection-api)
   - [Set up](#set-up)
@@ -10,7 +10,12 @@ Drivers and Cuda versions are a pain to deal with.
     - [running a container](#running-a-container)
   - [process](#process)
     - [part 1 :: dataset conversions](#part-1--dataset-conversions)
-    - [part 2 :: uuhh](#part-2--uuhh)
+    - [part 2 :: training the model](#part-2--training-the-model)
+    - [part 3 :: converting between model formats](#part-3--converting-between-model-formats)
+      - [converting to a .tflite format](#converting-to-a-tflite-format)
+      - [converting to a TensorFlowJS format](#converting-to-a-tensorflowjs-format)
+  - [other notes](#other-notes)
+    - [running on a Coral TPU](#running-on-a-coral-tpu)
   
 
 ## Set up
@@ -46,9 +51,17 @@ These are the prerequisites are only for the TensorFlow Object Detection API.
 ### steps to install an image
 
 ```bash
-docker build -t odapi -f ./dockerfiles/odapi  # build the object detection API image
-docker build -t tfjs -f ./dockerfiles/tfjs  # build the image for tensorflow js conversions
+# build the object detection API image
+docker build -t odapi -f ./dockerfiles/odapi.dockerfile ./dockerfiles
+
+# build the image for tensorflow js conversions
+docker build -t tfjs -f ./dockerfiles/tfjs.dockerfile
 ```
+
+You can check that you built the 3 images by running `docker images`. Here is a summary though:
+- **`odapi`**, runs the TensorFlow **O**bject **D**etection **API**, which at the date of writing, only runs on TensorFlow 1.x, so it pulls from the `tensorflow/tensorflow:1.15.0-gpu-py3` image as its base.
+- **`tfjs`**, encapsulates the `tensorflowjs` suite and its function is to provide a TensorFlow JS converter. Since it does not require GPU, and its latest version requires TensorFlow 2.x, it pulls from `tensorflow/tensorflow:2.1.0-py3` as its base image.
+- finally, **`toco`** comes with TOCO (i.e. [TensorFlow Lite Converter](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/toco)) built with [bazel](bazel.build). It pulls from the same base image as `tfjs`, which is cached.
 
 ### running a container
 
@@ -76,13 +89,13 @@ docker run --rm -it -v $(pwd):/home/oceanus tfjs
 
 ## process
 
-This section describes the scripts you have to run in order to get a model.
+This section describes the scripts you have to run in order to get a model, in relevant order.
 
 ### part 1 :: dataset conversions
 
-It goes from a supervisely-formatted dataset (placed in `./input/supervisely`) » `./input/tf_csv` » `./input/tf_records`.
+It goes from a supervisely-formatted dataset (placed in `./input/supervisely`) » to `./input/tf_csv` » lastly, to `./input/tf_records`.
 
-For these steps, you only need to run a python installation with `tensorflow`.
+For these steps, you only need to run a python installation with `tensorflow`, or use the odapi container in tty mode.
 
 ```shell
 python ./input/supervisely2tf_csv.py  # will use defaults
@@ -106,7 +119,49 @@ python ./input/generate_tfrecord.py \
 --label_map=./input/tf_csv/label_map.pbtxt
 ```
 
-That should set you up with the dataset.
+This should have you set up with the dataset.
 
 
-### part 2 :: uuhh
+### part 2 :: training the model
+
+### part 3 :: converting between model formats
+
+The resulting model of the previous part comes in three formats.
+
+- [FrozenGraph](), deprecated in TensorFlow 2.
+- [SavedModel](https://www.tensorflow.org/guide/saved_model), which will be used to convert to TensorFlowJS
+
+- tflite-compatible inference graph
+  - saved in files `tflite_graph.pb` and `tflite_graph.pbtxt`
+
+
+#### converting to a .tflite format
+
+This is kind of a summary of the [official guide to getting a tflite model](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/running_on_mobile_tensorflowlite.md).
+
+The [bazel build](bazel.build) tool is needed, and that's where the toco image comes in.
+
+#### converting to a TensorFlowJS format
+
+The training script just saves `saved_model.pb`. But it actually should be saved
+in a directory with the following structure.
+
+```console
+$ tree ./sample
+.
+├── saved_model.pb
+└── variables
+
+1 directory, 1 file
+```
+where `variables` is an empty directory. Then, by running a tfjs container in tty mode, you can launch `tensorflowjs_wizard`. The prompt will ask you for a directory or file. In this case, we point it to `./sample`, and the SavedModel format will be auto-detected. From this point onwards, you can answer the prompt with defaults and you will obtain the TensorFlowJS formatted model.
+
+## other notes
+
+### running on a Coral TPU
+If you want to run a model on a Coral TPU, one way to train a model
+that supports TPU training - any marked with an [asterisk (☆) in the Model Zoo list](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md#coco-trained-models). (not tested)
+
+Another option is to train an `ssd_mobilenet_v2_`**`quantized`**`_coco` in order to easily convert to an uint8-tflite-formatted model - as per section [tflite conversion section](#converting-to-a-tflite-format). (tested)
+
+
