@@ -1,4 +1,3 @@
-# could edit this to not use gpu version via ARG
 FROM tensorflow/tensorflow:1.15.0-gpu-py3
 
 # make a "user" directory, later stored to HOME
@@ -46,7 +45,7 @@ ENV PYTHONPATH $HOME/models/research:$HOME/models/research/slim
 
 # test installation
 RUN echo 'testing installation of Object Detection API' && \
-python $HOME/models/research/object_detection/builders/model_builder_test.py
+    python $HOME/models/research/object_detection/builders/model_builder_test.py
 
 # return home
 USER 1000:1000
