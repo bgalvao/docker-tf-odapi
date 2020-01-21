@@ -11,3 +11,6 @@ output/*
 !output/.gitkeep
 
 .cache/
+
+tensorflow/
+oceanus/
