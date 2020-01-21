@@ -4,7 +4,7 @@
 # frozen graph compatible for tflite conversion
 
 # USER PARAMS -----------------------------------------------------------------
-MODEL_NAME="sample_model"
+MODEL_NAME="1k"
 
 OUTPUT_DIR=./output/$MODEL_NAME/tflite  # a mere default you may want to change
 
@@ -64,6 +64,9 @@ $TOCO_PATH \
 cat output/sample_model/label_map.pbtxt |\
  grep name | sed s/"\s\sname: '*'"/""/ |\
   sed s/"'"/""/ >> $OUTPUT_DIR/labelmap.txt
+
+chown 1000:1000 -R $OUTPUT_DIR 
+chmod 777 $OUTPUT_DIR/*
 
 # -----------------------------------------------------------------------------
 # Note that when INFERENCE_TYPE=QUANTIZED_UINT8 without passing
