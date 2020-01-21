@@ -2,7 +2,6 @@ FROM tensorflow/tensorflow:2.1.0-py3
 
 # make a "user" directory
 RUN mkdir -p /home/oceanus
-#ENV HOME /home/oceanus
 WORKDIR /home
 
 
@@ -24,11 +23,7 @@ RUN git clone --depth 1 https://github.com/tensorflow/tensorflow.git
 WORKDIR /home/tensorflow
 RUN touch WORKSPACE
 RUN bazel build tensorflow/lite/toco:toco
-# RUN bazel build 
-# RUN
-
-
 
 # return home
-# USER 1000:1000
-# WORKDIR $HOME
+ENV HOME /home/oceanus
+WORKDIR $HOME
