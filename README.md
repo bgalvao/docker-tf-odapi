@@ -55,7 +55,10 @@ These are the prerequisites are only for the TensorFlow Object Detection API.
 docker build -t odapi -f ./dockerfiles/odapi.dockerfile ./dockerfiles
 
 # build the image for tensorflow js conversions
-docker build -t tfjs -f ./dockerfiles/tfjs.dockerfile
+docker build -t tfjs -f ./dockerfiles/tfjs.dockerfile ./dockerfiles
+
+# build the image for tensorflow lite conversions
+docker build -t toco -f ./dockerfiles/toco.dockerfile ./dockerfiles
 ```
 
 You can check that you built the 3 images by running `docker images`. Here is a summary though:
@@ -137,24 +140,41 @@ The resulting model of the previous part comes in three formats.
 
 #### converting to a .tflite format
 
-This is kind of a summary of the [official guide to getting a tflite model](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/running_on_mobile_tensorflowlite.md).
+This is takes from the [official guide to getting a tflite model](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/running_on_mobile_tensorflowlite.md) that you may want to read.
 
-The [bazel build](bazel.build) tool is needed, and that's where the toco image comes in.
+Boot the purpose-specific container:
+
+```shell
+docker run -it --rm -v $(pwd):/home/oceanus toco
+# this is the only container that will run as root btw
+```
+
+Edit the [tflite_graph2tflite.sh](./container_scripts/tflite_graph2tflite.sh) script so that `MODEL_NAME` matches that of your target output model. After that is ensured, you just have to run
+the script from the container.
+
+```shell
+./container_scripts/tflite_graph2tflite.sh
+```
+
+The files for TensorFlow Lite will be placed in the `./output/$MODEL_NAME/tflite` directory.
+
 
 #### converting to a TensorFlowJS format
 
-The training script just saves `saved_model.pb`. But it actually should be saved
-in a directory with the following structure.
+Boot the corresponding container
 
-```console
-$ tree ./sample
-.
-├── saved_model.pb
-└── variables
-
-1 directory, 1 file
+```shell
+docker run -it --rm -v $(pwd):/home/oceanus tfjs 
 ```
-where `variables` is an empty directory. Then, by running a tfjs container in tty mode, you can launch `tensorflowjs_wizard`. The prompt will ask you for a directory or file. In this case, we point it to `./sample`, and the SavedModel format will be auto-detected. From this point onwards, you can answer the prompt with defaults and you will obtain the TensorFlowJS formatted model.
+
+Edit the [saved_model2tfjs.sh](./container_scripts/saved_model2tfjs.sh) script so that `MODEL_NAME` matches that of your target output model. After that is ensured, just execute the script from the container.
+
+```shell
+./container_scripts/saved_model2tfjs.sh
+```
+
+The files for TensorFlow JS will be placed in the `./output/$MODEL_NAME/tensorflow_js` directory.
+
 
 ## other notes
 

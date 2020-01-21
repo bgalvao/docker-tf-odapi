@@ -6,7 +6,8 @@
 # USER PARAMS -----------------------------------------------------------------
 MODEL_NAME="1k"
 
-OUTPUT_DIR=./output/$MODEL_NAME/tflite  # a mere default you may want to change
+# DEFAULTS
+OUTPUT_DIR=./output/$MODEL_NAME/tflite  # a default you shouldn't need to change
 
 # pick one
 # INFERENCE_TYPE=QUANTIZED_UINT8
@@ -14,6 +15,7 @@ INFERENCE_TYPE=FLOAT
 
 # If you want to use QUANTIZED_UINT8
 # one easier way is to input a *quantized* model
+
 # otherwise, you have to blindly set 
 # --default_ranges_min= and --default_ranges_max=
 # a sample error message regarding this is below.
