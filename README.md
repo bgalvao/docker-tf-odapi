@@ -3,19 +3,19 @@
 Drivers and Cuda versions are a pain to deal with. Praise our lord and savior Docker.
 
 - [Dockerized TensorFlow Object Detection API](#dockerized-tensorflow-object-detection-api)
-  - [Set up](#set-up)
-    - [test host machine](#test-host-machine)
-    - [prerequisites](#prerequisites)
-    - [steps to install an image](#steps-to-install-an-image)
-    - [running a container](#running-a-container)
-  - [process](#process)
-    - [part 1 :: dataset conversions](#part-1--dataset-conversions)
-    - [part 2 :: training the model](#part-2--training-the-model)
-    - [part 3 :: converting between model formats](#part-3--converting-between-model-formats)
-      - [converting to a .tflite format](#converting-to-a-tflite-format)
-      - [converting to a TensorFlowJS format](#converting-to-a-tensorflowjs-format)
-  - [other notes](#other-notes)
-    - [running on a Coral TPU](#running-on-a-coral-tpu)
+    - [Set up](#set-up)
+        - [test host machine](#test-host-machine)
+        - [prerequisites](#prerequisites)
+        - [steps to install an image](#steps-to-install-an-image)
+        - [running a container](#running-a-container)
+    - [process](#process)
+        - [part 1 :: dataset conversions](#part-1--dataset-conversions)
+        - [part 2 :: training the model](#part-2--training-the-model)
+        - [part 3 :: converting between model formats](#part-3--converting-between-model-formats)
+            - [converting to a .tflite format](#converting-to-a-tflite-format)
+            - [converting to a TensorFlowJS format](#converting-to-a-tensorflowjs-format)
+    - [other notes](#other-notes)
+        - [running on a Coral TPU](#running-on-a-coral-tpu)
   
 
 ## Set up
