@@ -63,7 +63,7 @@ $TOCO_PATH \
 
 
 # write a labelmap.txt too
-cat output/sample_model/label_map.pbtxt |\
+cat output/$MODEL_NAME/label_map.pbtxt |\
  grep name | sed s/"\s\sname: '*'"/""/ |\
   sed s/"'"/""/ >> $OUTPUT_DIR/labelmap.txt
 
