@@ -44,6 +44,7 @@ However you should not need CUDA, only a driver for your GPU.
 ### prerequisites
 
 These are the prerequisites are only for the TensorFlow Object Detection API.
+
 - an nvidia driver
 - `docker`
 - `nvidia-docker`
@@ -133,9 +134,8 @@ The resulting model of the previous part comes in three formats.
 
 - [FrozenGraph](), deprecated in TensorFlow 2.
 - [SavedModel](https://www.tensorflow.org/guide/saved_model), which will be used to convert to TensorFlowJS
-
 - tflite-compatible inference graph
-  - saved in files `tflite_graph.pb` and `tflite_graph.pbtxt`
+    - saved in files `tflite_graph.pb` and `tflite_graph.pbtxt`
 
 
 #### converting to a .tflite format
