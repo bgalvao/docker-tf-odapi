@@ -7,7 +7,7 @@
 MODEL_NAME="1k"
 
 # DEFAULTS
-OUTPUT_DIR=./output/$MODEL_NAME/tflite  # a default you shouldn't need to change
+OUTPUT_DIR=./output/$MODEL_NAME/export/tflite
 
 # pick one
 # INFERENCE_TYPE=QUANTIZED_UINT8
@@ -32,7 +32,7 @@ then
   mkdir -p $OUTPUT_DIR
 fi
 
-INPUT_FILE=output/$MODEL_NAME/tflite_graph.pb
+INPUT_FILE=output/$MODEL_NAME/export/tflite_graph/tflite_graph.pb
 OUTPUT_FILE=$OUTPUT_DIR/detect.tflite
 
 INPUT_ARRAYS=normalized_input_image_tensor
@@ -63,7 +63,7 @@ $TOCO_PATH \
 
 
 # write a labelmap.txt too
-cat output/$MODEL_NAME/label_map.pbtxt |\
+cat output/$MODEL_NAME/training/label_map.pbtxt |\
  grep name | sed s/"\s\sname: '*'"/""/ |\
   sed s/"'"/""/ >> $OUTPUT_DIR/labelmap.txt
 
