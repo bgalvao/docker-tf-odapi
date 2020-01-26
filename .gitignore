@@ -9,7 +9,6 @@ output/*
 !output/.gitkeep
 
 !.git*
-./.*
 
 downloaded_pretrained_models
 
@@ -17,3 +16,5 @@ downloaded_pretrained_models
 .keras
 .vscode
 .config
+# that of docker container btw
+.bash_history
