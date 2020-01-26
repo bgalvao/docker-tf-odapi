@@ -1,1 +1,13 @@
 this directory is to save trained models in their different formats.
+
+proposed for each model some_model
+
+    some_model
+    ├── export
+    │   ├── frozen_inference_graph
+    │   ├── saved_model
+    │   ├── tensorflow_js
+    │   └── tensorflow_lite
+    └── training
+        ├── etc.etc
+        └── model.ckpt.sth
