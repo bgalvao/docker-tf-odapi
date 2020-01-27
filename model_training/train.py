@@ -106,6 +106,7 @@ if __name__ == '__main__':
             labelmap_pbtxt_path=label_map_pbtxt_fname,  # later copied to export dir
             batch_size=args.batch_size,
             num_steps=args.num_steps,
+            num_eval_steps=args.num_eval_steps,
             checkpoint=args.ckpt2resume
         )
     else:
