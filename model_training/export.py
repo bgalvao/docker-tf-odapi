@@ -68,8 +68,11 @@ def export_tflite_ssd_graph(pipeline_fname, output_dir, ckpt_path):
 
 def export(model_name, ckpt_prefix=None):
     
+    """
+    If ckpt_prefix is None, it defaults to the most recent checkpoint.
+    """
+
     training_dir = join('output', model_name, 'training')
-    # training_config = join(training_dir, 'pipeline.config')  # dev purposes
     training_config = join(training_dir, 'training.config')
     output_dir = join('output', model_name, 'export')
 
@@ -90,12 +93,13 @@ def export(model_name, ckpt_prefix=None):
     )
 
 
-
-
-
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        'model_name',
+        help='Model name in ./output.'
+    )
     parser.add_argument(
         'model_name',
         help='Model name in ./output.'

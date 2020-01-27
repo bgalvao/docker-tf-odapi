@@ -2,6 +2,8 @@
 
 Drivers and Cuda versions are a pain to deal with. Praise our lord and savior Docker.
 
+
+
 - [Dockerized TensorFlow Object Detection API](#dockerized-tensorflow-object-detection-api)
     - [Set up](#set-up)
         - [test host machine](#test-host-machine)
@@ -11,12 +13,14 @@ Drivers and Cuda versions are a pain to deal with. Praise our lord and savior Do
     - [process](#process)
         - [part 1 :: dataset conversions](#part-1--dataset-conversions)
         - [part 2 :: training the model](#part-2--training-the-model)
-        - [part 3 :: converting between model formats](#part-3--converting-between-model-formats)
+        - [part 3 :: exporting the model](#part-3--exporting-the-model)
+        - [part 4 :: converting between model formats](#part-4--converting-between-model-formats)
             - [converting to a .tflite format](#converting-to-a-tflite-format)
             - [converting to a TensorFlowJS format](#converting-to-a-tensorflowjs-format)
     - [other notes](#other-notes)
         - [running on a Coral TPU](#running-on-a-coral-tpu)
-  
+
+
 
 ## Set up
 
@@ -128,14 +132,50 @@ This should have you set up with the dataset.
 
 ### part 2 :: training the model
 
-### part 3 :: converting between model formats
+
+Boot up an `odapi` container. From within it run
+
+```shell
+python model_training/train_cli.py
+```
+
+and follow the prompts.
+
+
+### part 3 :: exporting the model
+
+
+After training the model, and before obtaining the tflite and tensorflow_js 
+formats, you need to export from a `model.ckpt-*` binary to other formats - 
+`*graph.pb` and `saved_model`.
+
+In order to do so, from an `odapi` container, you just need to run
+
+```shell
+python model_training/export_cli.py
+```
+
+and follow the interactive prompt. You'll pick the model and the respective checkpoint
+to export from.
+
+In order for this to work, you need to have trained a model, as this export
+does not work with the `model.ckpt` prefix nor with the `pipeline.config` 
+(configured for 90 classes of the coco dataset) that come with the download
+from tensorflow.org. Besides, `pipeline.config` includes a `batch_norm_trainable`
+field which the export scripts from TensorFlow Object Detection API do not support.
+
+I.e. you need a `model.ckpt-*` and a `training.config` that match each other,
+and are setup to work with the export scripts, and these are generated from training.
+
+
+### part 4 :: converting between model formats
 
 The resulting model of the previous part comes in three formats.
 
-- [FrozenGraph](), deprecated in TensorFlow 2.
-- [SavedModel](https://www.tensorflow.org/guide/saved_model), which will be used to convert to TensorFlowJS
-- tflite-compatible inference graph
-    - saved in files `tflite_graph.pb` and `tflite_graph.pbtxt`
+- `FrozenGraph`, deprecated in TensorFlow 2.
+- [`SavedModel`](https://www.tensorflow.org/guide/saved_model), which will be used to convert to TensorFlowJS
+- tflite-compatible inference graph, used to obtain a `tflite` executable.
+    - saved in files `tflite/tflite_graph.pb` and `tflite/tflite_graph.pbtxt`
 
 
 #### converting to a .tflite format
@@ -156,7 +196,7 @@ the script from the container.
 ./container_scripts/tflite_graph2tflite.sh
 ```
 
-The files for TensorFlow Lite will be placed in the `./output/$MODEL_NAME/tflite` directory.
+The files for TensorFlow Lite will be placed in the `./output/$MODEL_NAME/export/tflite` directory.
 
 
 #### converting to a TensorFlowJS format
@@ -173,7 +213,7 @@ Edit the [saved_model2tfjs.sh](./container_scripts/saved_model2tfjs.sh) script s
 ./container_scripts/saved_model2tfjs.sh
 ```
 
-The files for TensorFlow JS will be placed in the `./output/$MODEL_NAME/tensorflow_js` directory.
+The files for TensorFlow JS will be placed in the `./output/$MODEL_NAME/export/tensorflow_js` directory.
 
 
 ## other notes
