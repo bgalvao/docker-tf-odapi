@@ -16,5 +16,7 @@ downloaded_pretrained_models
 .keras
 .vscode
 .config
+.local
+.nv
 # that of docker container btw
 .bash_history
