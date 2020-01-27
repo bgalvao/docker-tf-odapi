@@ -24,7 +24,7 @@ def get_num_classes(pbtxt_fname):
 
 def set_training_config(
     base_pipeline_config, model_name, train_record, test_record,
-    labelmap_pbtxt_path, batch_size, num_steps, checkpoint=None
+    labelmap_pbtxt_path, batch_size, num_steps, num_eval_steps, checkpoint=None
     ):
 
     """
@@ -38,11 +38,10 @@ def set_training_config(
         the name to the model you want to give in order to save to 
         ./output/model_name/training/training.config.
     - checkpoint : str
-        If None, it will simply be os.path.join(training_dir, 'model.ckpt').
-        'model.ckpt' is a template to the first checkpoint, i.e. training step 0
         If you want to resume training, then pass a different checkpoint template.
         E.g. 'model.ckpt-400'. This function will always assert that
-        model.ckpt*{.index, .meta} exist.
+        model.ckpt*{.index, .meta} exist. Default is to resume from the last
+        checkpoint..
     """
     # creates an edited copy of the base_pipeline_config
     with open(base_pipeline_config) as f:
@@ -92,6 +91,11 @@ def set_training_config(
                     get_num_classes(labelmap_pbtxt_path)),
                     s
                 )
+        
+        s = re.sub(
+            'max_evals: [0-9]+', 'max_evals: {}'.format(num_eval_steps),
+            s
+        )
     
     # writes the edit to a new file
     out_dir = join('./output', model_name, 'training')
