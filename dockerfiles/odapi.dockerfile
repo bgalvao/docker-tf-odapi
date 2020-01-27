@@ -2,7 +2,7 @@ FROM tensorflow/tensorflow:1.15.0-gpu-py3
 
 # pip dependencies of the object detection api
 RUN pip install Cython contextlib2 pillow lxml jupyterlab matplotlib pandas \
-    tqdm
+    tqdm bullet
 
 # install git
 RUN apt update
