@@ -139,7 +139,7 @@ Boot up an `odapi` container. From within it run
 python model_training/train_cli.py
 ```
 
-and follow the prompts.
+and follow the prompts. 
 
 
 ### part 3 :: exporting the model
